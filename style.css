@@ -1,0 +1,38 @@
+body{
+	margin:0px;
+	height: 100vh;
+	display: flex;
+	justify-content: space-around;
+
+}
+.container{
+	width:90%;
+	height:90%;
+	border:solid 1px black;
+	margin: auto;
+}
+#snake{
+	width:20px;
+	height:20px;
+	background-color: #333333;
+	position: absolute;
+
+}
+/* idea with classes not working because we need to save position x or y when we change direction*/
+/*.right{
+	transform: translateX(500px);
+
+	transition: all 5s linear;
+}
+.up{
+	transform: translate(0px);
+	transition: all 5s linear;
+}
+.down{
+	transform: translateY(500px);
+	transition: all 5s linear;
+}
+.left{
+	transform: translateX(0px);
+	transition: all 5s linear;
+}*/
