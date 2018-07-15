@@ -5,9 +5,9 @@ body {
   justify-content: space-around;
 }
 .container {
-  width: 90%;
-  height: 90%;
-  border: solid 1px black;
+  width: 92%;
+  height: 92%;
+  border: solid 2px red;
   margin: auto;
 }
 #snake {

@@ -10,90 +10,110 @@
  *
  */
 
-// Global variables  pointing to the snake and target objects
-const snake = document.getElementById("snake");
-const target = document.getElementById("target");
+// Global variables
+var canvas = document.getElementById("canvas");
+var ctx = canvas.getContext("2d");
+class Snake {
+  constructor(x, y, size, speed, color, direction) {
+    this.x = x;
+    this.y = y;
+    this.size = size;
+    this.speed = speed;
+    this.color = color;
+    // up - down - right - left
+    this.directon = direction;
+  }
+
+  draw() {
+    ctx.fillStyle = this.color;
+    ctx.fillRect(this.x, this.y, this.size, this.size);
+    ctx.fill();
+  }
+}
+
+let snake = new Snake(
+  canvas.width / 2,
+  canvas.height / 2,
+  10,
+  1,
+  "blue",
+  "down"
+);
+function draw() {
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  drawTarget();
+  snake.draw();
+  // make movement
+  switch (snake.directon) {
+    // Move rigth increase x and y remains constant
+    case "right":
+      snake.x += snake.speed;
+      break;
+    case "left":
+      snake.x -= snake.speed;
+      break;
+    // Up
+    case "up":
+      snake.y -= snake.speed;
+      break;
+    // Down
+    case "down":
+      snake.y += snake.speed;
+    default:
+      break;
+  }
+
+  if (
+    snake.y < 0 ||
+    snake.x < 0 ||
+    snake.y > canvas.height ||
+    snake.x > canvas.width
+  ) {
+    console.log("Movement should be cancelled, Game OVER");
+    // Cancel movement if snake out of boundaries
+    loop = clearInterval(loop);
+  }
+}
 
 // Generate a random point inside the boundaries
 // Returns and array representing the location
 // resultPoint[0] -> x coordinate and resultPoint[1] -> y coordinate
 const randomPoint = () => {
-  //Get the div container of the valid playing area
-  const playingArea = document.querySelector(".container");
-
   // Get the values to generate the random point inside the playing area
-  const width = playingArea.clientWidth;
-  const height = playingArea.clientHeight;
-
+  const width = canvas.width;
+  const height = canvas.height;
   // TODO
   // There is still a problem with the positions some times goes out of the boundaries
-  x = Math.floor(Math.random() * width + 20);
-  y = Math.floor(Math.random() * height + 20);
+  x = Math.floor(Math.random() * width + 1);
+  y = Math.floor(Math.random() * height + 1);
   resultPoint = [x, y];
-  console.log("X: " + resultPoint[0]);
-  console.log("Y: " + resultPoint[1]);
+
   return resultPoint;
 };
-// Spawn an element(snake or target) in a random position
-const spawn = element => {
-  let point = randomPoint();
-  element.style.left = point[0] + "px";
-  element.style.top = point[1] + "px";
+const point = randomPoint();
+const drawTarget = () => {
+  ctx.fillStyle = "red";
+  ctx.fillRect(point[0], point[1], snake.size, snake.size);
 };
-
-// Initialize the game
-const init = () => {
-  spawn(snake);
-  spawn(target);
-};
-
-init();
-//function for moving right setInterval runs this function many times with interval then we have smooth movement to the right
-function moveRight(element) {
-  var startRight = setInterval(moving, 5),
-    pos = 0;
-
-  function moving() {
-    if (pos > 900) {
-      clearInterval(startRight);
-    } else {
-      pos++;
-      element.style.left = pos + "px";
-    }
+window.addEventListener("keydown", event => {
+  console.log(event.key);
+  switch (event.key) {
+    case "ArrowRight":
+      snake.directon = "right";
+      break;
+    case "ArrowLeft":
+      snake.directon = "left";
+      break;
+    case "ArrowUp":
+      snake.directon = "up";
+      break;
+    case "ArrowDown":
+      snake.directon = "down";
+      break;
+    default:
+      break;
   }
-}
-
-//function movement get the event on the keyboard and check the key code than call move function in this direction
-function movement(event) {
-  console.log(event.keyCode);
-  if (event.keyCode === 38) {
-    // up move
-    clearInterval(startRight);
-  } else if (event.keyCode === 40) {
-    // down move
-    clearInterval(startRight);
-  } else if (event.keyCode === 37) {
-    // left move
-    clearInterval(startRight);
-  } else if (event.keyCode === 39) {
-    var startRight = setInterval(function() {
-        moving(event.keyCode);
-      }, 5),
-      pos = 0;
-
-    function moving(eventKey) {
-      console.log(eventKey !== 39); //check if eventKey changed
-
-      if (pos > 900 || eventKey !== 39) {
-        // if eventKey changed movement have to stop. But if pos>900 snake is stopped.
-        clearInterval(startRight);
-      } else {
-        pos++;
-        snake.style.left = pos + "px";
-      }
-    }
-  }
-}
-window.addEventListener("keydown", movement); //this is event listener for keys arrows  on the keyboard
-// now it works but only in one direction and only one time...
-// we need to save position and have a posibility to change direction.
+});
+snake.draw();
+// Call the draw function every 80 milisenconds
+let loop = setInterval(draw, 80);
